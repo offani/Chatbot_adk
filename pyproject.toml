@@ -1,0 +1,16 @@
+[project]
+name = "acttry"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "duckduckgo-search>=8.1.1",
+    "google-adk>=1.19.0",
+    "google-genai>=1.52.0",
+    "openpyxl>=3.1.5",
+    "pandas>=2.3.3",
+    "pillow>=12.0.0",
+    "pypdf>=6.4.0",
+    "python-dotenv>=1.2.1",
+]
