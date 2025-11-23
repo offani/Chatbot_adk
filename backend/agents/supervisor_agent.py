@@ -50,7 +50,7 @@ def create_supervisor_agent(web_search_agent, multimodal_agent, model_name="gemi
         - If the user asks about a file they mentioned or attached, use multimodal_agent
         - If the query needs web search or current information, use web_search_agent
         - If unsure and no file is mentioned, default to web_search_agent
-        - Use transfer_to_agent() to delegate to the appropriate specialist
+
         
         Always delegate to specialist agents - do not attempt to answer directly.
         """,
