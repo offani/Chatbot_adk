@@ -1,0 +1,12 @@
+This is a test document for the MultiModal Agent.
+
+Contents:
+- Section 1: Introduction to AI
+- Section 2: Machine Learning Basics
+- Section 3: Deep Learning Applications
+
+The future of artificial intelligence is promising with advancements in:
+1. Natural Language Processing
+2. Computer Vision
+3. Robotics
+4. Autonomous Systems
