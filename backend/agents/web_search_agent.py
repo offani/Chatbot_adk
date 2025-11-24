@@ -45,32 +45,17 @@ def create_web_search_agent(model_name="gemini-2.5-flash-lite"):
         tools=[web_search_tool],
         description="Handles web search queries. Use for current events, facts, news, weather, and general knowledge questions.",
         instruction="""
-        You are the Web Search Agent. Your ONLY task is to search the internet for information.
+        You are the Web Search Agent. You handle queries delegated by the Supervisor about current events, facts, news, weather, and general knowledge only using web search tool.
         
-        Use the web_search_tool tool to find information, then provide a clear, helpful answer based on the results.
+        **Your Task:**
+        1. Use the web_search_tool to search for information related to the query
+        2. Analyze the search results
+        3. Provide a clear, comprehensive answer based on the results
+        4. Return your answer to the Supervisor, who will relay it to the user
+        
+        Focus ONLY on the specific query you've been asked to handle return your answer to the Supervisor .
         """
     )
-    return agent
-
-
-
-
-# """
-# Factory function to create a WebSearchAgent as a sub-agent.
-# """
-# api_key = os.environ.get("GOOGLE_API_KEY")
-# if not api_key:
-#     raise ValueError("GOOGLE_API_KEY not found in environment variables")
-# model_name="gemini-2.5-flash-lite"
-# model = Gemini(model=model_name, api_key=api_key)
-# websaerch_agent = LlmAgent(
-#     name="web_search_agent",
-#     model=model,
-#     tools=[google_search],
-#     description="Handles web search queries. Use for current events, facts, news, weather, and general knowledge questions.",
-#     instruction="""
-#     You are the Web Search Agent. Your ONLY task is to search the internet for information.
     
-#     Use the google_search tool to find information, then provide a clear, helpful answer based on the results.
-#     """
-# )
+
+    return agent

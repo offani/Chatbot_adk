@@ -1,48 +1,59 @@
-import os
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.models import Gemini
-from dotenv import load_dotenv
+# import os
+# from google.adk.agents.llm_agent import LlmAgent
+# from google.adk.models import Gemini
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
-def create_supervisor_agent(web_search_agent, multimodal_agent, model_name="gemini-2.5-flash-lite"):
-    """
-    Factory function to create a SupervisorAgent as a coordinator with sub-agents.
+# def create_supervisor_agent(web_search_agent, multimodal_agent, model_name="gemini-2.5-pro"):
+
+#     api_key = os.environ.get("GOOGLE_API_KEY")
+#     if not api_key:
+#         raise ValueError("GOOGLE_API_KEY not found in environment variables")
     
-    This implements the ADK Coordinator/Dispatcher pattern where the coordinator
-    routes requests to specialized agents using LLM-driven delegation.
+#     model = Gemini(model=model_name, api_key=api_key)
     
-    Args:
-        web_search_agent: The WebSearchAgent instance
-        multimodal_agent: The MultiModalAgent instance
-        model_name: The Gemini model to use
-    
-    Returns:
-        LlmAgent configured as a coordinator
-    """
-    api_key = os.environ.get("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("GOOGLE_API_KEY not found in environment variables")
-    
-    model = Gemini(model=model_name, api_key=api_key)
-    
-    # Create coordinator agent with sub-agents for LLM-driven delegation
-    coordinator = LlmAgent(
-        name="supervisor_agent",
-        model=model,
-        description="Coordinator that routes queries to specialized agents.",
-        instruction="""
-        You are the Supervisor. Route user queries to the right specialist:
+#     # Create coordinator agent with sub-agents for LLM-driven delegation
+#     coordinator = LlmAgent(
+#         name="supervisor_agent",
+#         model=model,
+#         description="Coordinator that routes queries to specialized agents.",
+
+#         instruction="""
+#         You are the Supervisor Agent. You are a COORDINATOR ONLY - you do NOT have any capabilities to answer questions yourself.
         
-        - web_search_agent: For internet searches, current events, facts, news, weather
-        - multimodal_agent: For analyzing files (images, PDFs, spreadsheets, documents)
+#         **CRITICAL: You MUST delegate EVERY query to a specialist. You have NO ability to answer directly.**
         
-        ALWAYS delegate to a specialist. Never answer directly.
-        """,
-        sub_agents=[web_search_agent, multimodal_agent]
-    )
+#         **Available Specialists:**
+#         - web_search_agent: For internet searches, current events, facts, news, weather, general knowledge
+#         - multimodal_agent: For analyzing files (images, PDFs, spreadsheets, documents, data files, uploaded files)
+        
+#         **Routing Rules:**
+#         1. When user uploads or mentions ANY file (PDF, image, CSV, spreadsheet, document, etc.) → ALWAYS use multimodal_agent
+#         2. When user asks about current events, facts, news, weather → ALWAYS use web_search_agent
+#         3. Evaluate EVERY query independently
+#         4. You CANNOT answer questions yourself - you can ONLY delegate
+#         5. Wait for the specialist to complete their work, then relay their response
+        
+#         **File-Related Queries - MUST use multimodal_agent:**
+#         - User uploads a PDF → multimodal_agent
+#         - "Analyze this document" → multimodal_agent
+#         - "What's in this image?" → multimodal_agent
+#         - "Summarize this PDF" → multimodal_agent
+#         - "Read this spreadsheet" → multimodal_agent
+#         - ANY query involving uploaded files → multimodal_agent
+        
+#         **Web Search Queries - MUST use web_search_agent:**
+#         - "What's the weather in Paris?" → web_search_agent
+#         - "Latest news about AI" → web_search_agent
+#         - "Search for Python tutorials" → web_search_agent
+        
+#         **IMPORTANT: You are ONLY a router. You have NO tools. You have NO knowledge. You can ONLY delegate to specialists.**
+#         """,
+#         sub_agents=[web_search_agent, multimodal_agent]
+#     )
     
-    return coordinator
+#     return coordinator
 
 # if __name__ == "__main__":
 #     # Test the coordinator pattern
