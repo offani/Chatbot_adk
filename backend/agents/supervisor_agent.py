@@ -30,74 +30,59 @@ def create_supervisor_agent(web_search_agent, multimodal_agent, model_name="gemi
     coordinator = LlmAgent(
         name="supervisor_agent",
         model=model,
-        description="Main coordinator that routes user requests to specialized agents based on query type and context.",
+        description="Coordinator that routes queries to specialized agents.",
         instruction="""
-        You are the Supervisor Agent - a coordinator for a multi-agent system.
+        You are the Supervisor. Route user queries to the right specialist:
         
-        Your role is to route user requests to the appropriate specialized agent:
+        - web_search_agent: For internet searches, current events, facts, news, weather
+        - multimodal_agent: For analyzing files (images, PDFs, spreadsheets, documents)
         
-        1. **web_search_agent**: Route to this agent for:
-           - Questions requiring current information from the internet
-           - Factual queries about events, news, weather, or general knowledge
-           - Any query that needs external data beyond your training
-        
-        2. **multimodal_agent**: Route to this agent for:
-           - Questions about files, images, documents, or attachments
-           - Analysis of PDFs, spreadsheets, images, or text files
-           - Any query involving file content examination
-        
-        **Decision Making**:
-        - If the user asks about a file they mentioned or attached, use multimodal_agent
-        - If the query needs web search or current information, use web_search_agent
-        - If unsure and no file is mentioned, default to web_search_agent
-
-        
-        Always delegate to specialist agents - do not attempt to answer directly.
+        ALWAYS delegate to a specialist. Never answer directly.
         """,
         sub_agents=[web_search_agent, multimodal_agent]
     )
     
     return coordinator
 
-if __name__ == "__main__":
-    # Test the coordinator pattern
-    try:
-        from backend.agents.web_search_agent import create_web_search_agent
-        from backend.agents.multimodal_agent import create_multimodal_agent
-        from google.adk.runners import InMemoryRunner
-        from google.genai import types
-        import uuid
+# if __name__ == "__main__":
+#     # Test the coordinator pattern
+#     try:
+#         from backend.agents.web_search_agent import create_web_search_agent
+#         from backend.agents.multimodal_agent import create_multimodal_agent
+#         from google.adk.runners import InMemoryRunner
+#         from google.genai import types
+#         import uuid
         
-        # Create specialist agents
-        web_agent = create_web_search_agent()
-        multimodal = create_multimodal_agent()
+#         # Create specialist agents
+#         web_agent = create_web_search_agent()
+#         multimodal = create_multimodal_agent()
         
-        # Create coordinator
-        supervisor = create_supervisor_agent(web_agent, multimodal)
+#         # Create coordinator
+#         supervisor = create_supervisor_agent(web_agent, multimodal)
         
-        # Test with runner
-        runner = InMemoryRunner(agent=supervisor, app_name="test")
-        session_id = str(uuid.uuid4())
+#         # Test with runner
+#         runner = InMemoryRunner(agent=supervisor, app_name="test")
+#         session_id = str(uuid.uuid4())
         
-        runner.session_service.create_session_sync(app_name="test", user_id="user", session_id=session_id)
+#         runner.session_service.create_session_sync(app_name="test", user_id="user", session_id=session_id)
         
-        user_msg = types.Content(
-            parts=[types.Part(text="What is the weather in Paris?")], 
-            role="user"
-        )
+#         user_msg = types.Content(
+#             parts=[types.Part(text="What is the weather in Paris?")], 
+#             role="user"
+#         )
         
-        print("[Test] Sending query to supervisor...")
-        response_text = ""
-        for event in runner.run(user_id="user", session_id=session_id, new_message=user_msg):
-            if hasattr(event, 'text') and event.text:
-                response_text += event.text
-            elif hasattr(event, 'content') and hasattr(event.content, 'parts'):
-                for part in event.content.parts:
-                    if part.text:
-                        response_text += part.text
+#         print("[Test] Sending query to supervisor...")
+#         response_text = ""
+#         for event in runner.run(user_id="user", session_id=session_id, new_message=user_msg):
+#             if hasattr(event, 'text') and event.text:
+#                 response_text += event.text
+#             elif hasattr(event, 'content') and hasattr(event.content, 'parts'):
+#                 for part in event.content.parts:
+#                     if part.text:
+#                         response_text += part.text
         
-        print("\n[Test Response]:", response_text)
-    except Exception as e:
-        print(f"Test failed: {e}")
-        import traceback
-        traceback.print_exc()
+#         print("\n[Test Response]:", response_text)
+#     except Exception as e:
+#         print(f"Test failed: {e}")
+#         import traceback
+#         traceback.print_exc()
